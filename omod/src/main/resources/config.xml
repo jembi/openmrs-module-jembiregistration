@@ -58,6 +58,12 @@
 		<file>messages_es.properties</file>
 	</messages>
 	<!-- /Internationalization -->
+	
+	
+	<extension>
+    	<point>org.openmrs.gutter.tools</point>
+    	<class>org.openmrs.module.jembiregistration.extension.html.RegisterPatientGutterListExt</class>
+	</extension>
 
 </module>
 
