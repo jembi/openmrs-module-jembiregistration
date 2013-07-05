@@ -13,6 +13,14 @@
  */
 package org.openmrs.module.jembiregistration.api.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,5 +48,46 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
      */
     public JembiRegistrationDAO getDao() {
 	    return dao;
+    }
+    
+    public boolean printPatientBarCode(Patient patient, Location location){
+    	
+    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Context.getLocale());
+    	
+		try {
+			// handle null case
+			if (patient == null) {
+				throw new APIException("No patient passed to printPatientBarCode method");
+			}
+			
+			// TODO: potentially pull this formatting code into a configurable template?
+			// build the command to send to the printer -- written in ZPL
+			StringBuilder data = new StringBuilder();
+			data.append("^XA"); 
+			data.append("^CI28");   // specify Unicode encoding	
+			
+			/* Name (Only print first and last name */			
+			data.append("^FO140,40^AVN^FD" + (patient.getPersonName().getGivenName() != null ? patient.getPersonName().getGivenName() : "") + " " 
+					+ (patient.getPersonName().getFamilyName() != null ? patient.getPersonName().getFamilyName() : "") + "^FS");
+			
+			/* Birthdate */
+			data.append("^FO140,350^ATN^FD" + df.format(patient.getBirthdate()) + " " + (patient.getBirthdateEstimated() ? "(*)" : " ") + "^FS"); 
+			data.append("^FO140,400^ATN^FD" + Context.getMessageSourceService().getMessage("patientregistration.gender." + patient.getGender()) + "^FS"); 	
+			
+			/* Print the bar code, based on the primary identifier */
+			PatientIdentifier primaryIdentifier = patient.getPatientIdentifier();
+			if (primaryIdentifier != null) {
+				data.append("^FO790,250^ATN^BY4^BCN,150^FD" + primaryIdentifier.getIdentifier() + "^FS");    // print barcode & identifier
+			}
+			
+			/* Quanity and print command */
+			data.append("^PQ" + 1);
+			data.append("^XZ");
+    	
+		} catch (Exception e){
+			
+		}
+		
+		return true;
     }
 }

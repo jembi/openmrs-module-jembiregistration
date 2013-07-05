@@ -36,6 +36,11 @@
 		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
 	</extension>
 	
+	<!-- Add print barcode link to top of patient dashboard -->
+	<extension>
+		<point>org.openmrs.patientDashboard.afterLastEncounter</point>
+		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.PrintBarCodeExt</class>
+	</extension>
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 				
