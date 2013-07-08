@@ -29,28 +29,21 @@ public class PrintBarCodeServlet extends HttpServlet{
 		Integer patientId = Integer.parseInt( request.getParameter("patientId") );
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		try{
+			log.info("Trying to print Barcode");
 			boolean b = rs.printPatientBarCode(patient);
 		} catch (Exception e){
 			log.error(e);
 		}
-		
-		try {
-			response.sendRedirect("patientDashboard?patientId=" + patientId);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			try{
+				
+				response.sendRedirect(response.encodeRedirectURL("patientDashboard.jsp"));
+			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
+	
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		try {
-			response.sendRedirect("index.htm");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+	
 }

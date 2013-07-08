@@ -53,6 +53,7 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
     public boolean printPatientBarCode(Patient patient){
     	
     	DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Context.getLocale());
+    	log.fatal("printing Bar Code");
     	
 		try {
 			// handle null case
@@ -83,6 +84,8 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 			/* Quanity and print command */
 			data.append("^PQ" + 1);
 			data.append("^XZ");
+			
+			log.fatal(data.toString());
     	
 		} catch (Exception e){
 			
