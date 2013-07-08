@@ -39,8 +39,15 @@
 	<!-- Add print barcode link to top of patient dashboard -->
 	<extension>
 		<point>org.openmrs.patientDashboard.afterLastEncounter</point>
-		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.PrintBarCodeExt</class>
+		<class>org.openmrs.module.jembiregistration.extension.html.PrintBarCodeExt</class>
 	</extension>
+	
+	
+	<extension>
+    	<point>org.openmrs.gutter.tools</point>
+    	<class>org.openmrs.module.jembiregistration.extension.html.RegisterPatientGutterListExt</class>
+	</extension>
+	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 				
@@ -64,11 +71,11 @@
 	</messages>
 	<!-- /Internationalization -->
 	
+	<servlet>
+  	   <servlet-name>printBarCodeServlet</servlet-name>
+ 	   <servlet-class>org.openmrs.module.jembiregistration.web.servlet.PrintBarCodeServlet</servlet-class>
+	</servlet>   
 	
-	<extension>
-    	<point>org.openmrs.gutter.tools</point>
-    	<class>org.openmrs.module.jembiregistration.extension.html.RegisterPatientGutterListExt</class>
-	</extension>
 
 </module>
 

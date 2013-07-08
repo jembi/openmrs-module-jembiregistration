@@ -4,21 +4,27 @@ import org.openmrs.module.web.extension.LinkExt;
 
 public class PrintBarCodeExt extends LinkExt{
 
+    String urlg = "";
+    String label = "";
+ 
 	@Override
-	public String getLabel(){
-		return "jembiregistration.printBarCode";
+	public String getLabel() {
+		this.label="Print Bar Code";
+		return this.label;
 	}
-	
+
+
 	@Override
 	public String getRequiredPrivilege() {
-		// TODO Auto-generated method stub
-		return "View Patients";
+		return "";
 	}
 
 	@Override
 	public String getUrl() {
-		// TODO Auto-generated method stub
-		return null;
+		Integer patientId = Integer.valueOf(getParameterMap().get("patientId"));
+		this.urlg = "moduleServlet/jembiregistration/printBarCodeServlet?patientId=" + patientId ;
+		return this.urlg;
 	}
+
 
 }

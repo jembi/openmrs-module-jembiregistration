@@ -36,5 +36,7 @@ public interface JembiRegistrationService extends OpenmrsService {
 	 * 
 	 */
 	
-	public boolean printPatientBarCode(Patient patient, Location location);
+
+	public boolean printPatientBarCode(Patient patient);
+
 }

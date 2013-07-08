@@ -50,7 +50,7 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 	    return dao;
     }
     
-    public boolean printPatientBarCode(Patient patient, Location location){
+    public boolean printPatientBarCode(Patient patient){
     	
     	DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Context.getLocale());
     	
