@@ -34,14 +34,14 @@ public class PrintBarCodeServlet extends HttpServlet{
 		} catch (Exception e){
 			log.error(e);
 		}
-			try{
+			/*try{
 				
 				response.sendRedirect(response.encodeRedirectURL("patientDashboard.jsp"));
 			
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 	}
 	
 

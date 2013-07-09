@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.jembiregistration.api.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -22,6 +24,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.jembiregistration.api.JembiRegistrationService;
@@ -85,10 +88,30 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 			data.append("^PQ" + 1);
 			data.append("^XZ");
 			
-			log.fatal(data.toString());
-    	
-		} catch (Exception e){
+			String[] cmd = new String[3];
 			
+			cmd[0] = "cmd.exe" ;
+            cmd[1] = "/c" ;
+            cmd[2] = "C:\\Users\\moasis\\printbarcode.bat";
+			
+			try{
+				log.fatal(data.toString());
+				File srcFile = new File("C:\\Users\\moasis\\barcode.zpl");
+				//File destDir = new File("\\\\MOASIS-PILOT\\ZebraPrinter\\");
+
+				FileUtils.writeStringToFile(srcFile,data.toString());
+				//FileUtils.copyFileToDirectory(srcFile, destDir);
+				Process proc = Runtime.getRuntime().exec("cmd /c C:\\Users\\moasis\\printbarcode.bat");
+
+				// any error message?
+				log.fatal("Barcode process exited with value: " + proc.exitValue() + " | " + proc.waitFor());
+				
+			} catch (IOException io){
+				io.printStackTrace();
+			}
+			
+		} catch (Exception e){
+			e.printStackTrace();
 		}
 		
 		return true;
