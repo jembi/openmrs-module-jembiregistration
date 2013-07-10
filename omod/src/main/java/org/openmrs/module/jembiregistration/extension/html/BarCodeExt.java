@@ -13,11 +13,23 @@ public class BarCodeExt extends Extension{
 		
 		Integer patientId = Integer.valueOf(getParameterMap().get("patientId"));
 		
-		StringBuilder link = new StringBuilder("<a href=\"moduleServlet/jembiregistration/printBarCodeServlet?patientId=");
-		link.append(patientId.toString());
-		link.append("\">Print Bar Code</a>");
+		StringBuffer headerHTML = new StringBuffer();
 		
-		return link.toString();
+		String servletResource = "moduleServlet/jembiregistration/printBarCodeServlet?patientId=" + patientId.toString();
+				
+		headerHTML.append("<script type=\"text/javascript\">");
+		headerHTML.append("function printBarcode() {");
+		headerHTML.append("	jQuery.get('" + servletResource + "', function(data) {");
+		headerHTML.append("		//alert('Printed Barcode!');");
+		headerHTML.append("		});	");
+		headerHTML.append("}");
+		headerHTML.append("</script>");
+		
+		headerHTML.append("<table><tr><td>");
+		headerHTML.append("<button onClick=\"printBarcode();\"><spring:message code='jembiregistration.printButtonLabel'/></button>");
+		headerHTML.append("</td></tr></table>");
+		
+		return headerHTML.toString();
 	}
 
 }
