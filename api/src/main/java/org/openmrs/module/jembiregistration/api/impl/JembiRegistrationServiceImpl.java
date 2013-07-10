@@ -18,6 +18,16 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
+import javax.print.attribute.PrintServiceAttribute;
+import javax.print.attribute.standard.PrinterName;
+
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -54,9 +64,22 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
     }
     
     public boolean printPatientBarCode(Patient patient){
-    	
+    	String template = "^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR2,2~SD30^JUS^LRN^CI0^XZ"+
+    					  "^XA" +
+    					  "^MMT" +
+    					  "^PW799" +
+    					  "^LL0240" +
+    					  "^LS24" +
+    					  "^FT583,85^A0N,28,28^FH\\^FD*PN*^FS" +
+    					  "^FT583,119^A0N,28,28^FH\\^FD*BDL*: *BD*^FS" +
+    					  "^FT583,153^A0N,28,28^FH\\^FDNID: *NID*^FS" +
+    					  "^FT583,187^A0N,28,28^FH\\^FD*GL*: *G*^FS" +
+    					  "^BY4,3,160^FT65,182^BCN,,Y,N" +
+    					  "^FD>;12345678>69^FS" +
+    					  "^PQ1,0,1,Y^XZ";
+    					  		
     	DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Context.getLocale());
-    	log.fatal("printing Bar Code");
+    	//log.fatal("printing Bar Code");
     	
 		try {
 			// handle null case
@@ -90,7 +113,7 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 			
 			String[] cmd = new String[3];
 			
-			cmd[0] = "cmd.exe" ;
+			/*cmd[0] = "cmd.exe" ;
             cmd[1] = "/c" ;
             cmd[2] = "C:\\Users\\moasis\\printbarcode.bat";
 			
@@ -108,8 +131,44 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 				
 			} catch (IOException io){
 				io.printStackTrace();
-			}
+			}*/
 			
+			  try {
+		           
+		           PrintService psZebra = null;
+		           String sPrinterName = null;
+		           PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+		           
+		           log.fatal("Printers found:");
+		           for (int i = 0; i < services.length; i++) {
+		               
+		               PrintServiceAttribute attr = services[i].getAttribute(PrinterName.class);
+		               sPrinterName = ((PrinterName) attr).getValue();
+		               log.fatal(sPrinterName);
+		               if (sPrinterName.toLowerCase().indexOf("textbarcodeprinter") >= 0) {
+		            	   
+		                   psZebra = services[i];
+		                   break;
+		               }
+		           }
+		           
+		           if (psZebra == null) {
+		               log.fatal("Zebra printer is not found.");
+		               
+		           }
+		           DocPrintJob job = psZebra.createPrintJob();
+
+		           String s = "^XA^FO100,40^BY3^B3,,30^FD123ABC^XZ";
+
+		           byte[] by = s.getBytes();
+		           DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+		           Doc doc = new SimpleDoc(by, flavor, null);
+		           job.print(doc, null);
+		           
+		       } catch (PrintException e) {
+		           e.printStackTrace();
+		       }      
+		   //}
 		} catch (Exception e){
 			e.printStackTrace();
 		}
