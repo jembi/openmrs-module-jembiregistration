@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.jembiregistration.api;
 
+import org.openmrs.Location;
+import org.openmrs.Patient;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,4 +35,8 @@ public interface JembiRegistrationService extends OpenmrsService {
 	 * Add service methods here
 	 * 
 	 */
+	
+
+	public boolean printPatientBarCode(Patient patient);
+
 }
