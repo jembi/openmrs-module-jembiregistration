@@ -70,12 +70,12 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
     					  "^PW799" +
     					  "^LL0240" +
     					  "^LS24" +
-    					  "^FT573,85^A0N,28,28^FH\\^FD*PN*^FS" +
-    					  "^FT573,119^A0N,28,28^FH\\^FD*BDL*: *BD*^FS" +
-    					  "^FT573,153^A0N,28,28^FH\\^FD*NIDL*: *NID*^FS" +
-    					  "^FT573,187^A0N,28,28^FH\\^FD*GL*: *G*^FS" +
-    					  "^BY4,3,160^FT65,182^B3N,,Y,N" +
-    					  "^FD*NID*^FS" +
+    					  "^FT563,85^A0N,28,28^FH\\^FD*PN*^FS" +
+    					  "^FT563,119^A0N,28,28^FH\\^FD*BDL*: *BD*^FS" +
+    					  "^FT563,153^A0N,28,28^FH\\^FD*NIDL*: *NID*^FS" +
+    					  "^FT563,187^A0N,28,28^FH\\^FD*GL*: *G*^FS" +
+    					  "^BY4,3,160^FT65,182^BCN,,Y,N" +
+    					  "^FD>:*NID*^FS" +
     					  "^PQ1,0,1,Y^XZ";
     	
     					  		
@@ -94,7 +94,7 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 			/* Name (Only print first and last name */			
 			
 			/* Birthdate */
-			String birthDateLabel = Context.getMessageSourceService().getMessage("Person.birthdate");
+			String birthDateLabel = Context.getMessageSourceService().getMessage("jembiregistration.birthDateShort");
 			String birthDate = (df.format(patient.getBirthdate()) + " " + (patient.getBirthdateEstimated() ? "(*)" : " ")); 
 			
 			/*Gender*/
