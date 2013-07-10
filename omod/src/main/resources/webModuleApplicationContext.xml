@@ -22,11 +22,23 @@
 
 	<!-- Add here beans related to the web context -->
 
-	 
+	 <bean id="jembiRegistrationModuleMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order">
+			<value>10</value>
+		</property>
+		<property name="mappings">
+			<props>
+				<prop key="findPatient.htm">FindPatientController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	
 	<!-- Annotation based controllers -->
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
 	
 	<context:component-scan base-package="org.openmrs.module.jembiregistration.web.controller" />
- 
+
+	<bean id="FindPatientController" class="org.openmrs.module.jembiregistration.web.controller.FindPatientController" />
 		
 </beans>
