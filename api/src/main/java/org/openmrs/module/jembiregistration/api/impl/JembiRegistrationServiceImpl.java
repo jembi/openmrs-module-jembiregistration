@@ -70,13 +70,14 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
     					  "^PW799" +
     					  "^LL0240" +
     					  "^LS24" +
-    					  "^FT583,85^A0N,28,28^FH\\^FD*PN*^FS" +
-    					  "^FT583,119^A0N,28,28^FH\\^FD*BDL*: *BD*^FS" +
-    					  "^FT583,153^A0N,28,28^FH\\^FDNID: *NID*^FS" +
-    					  "^FT583,187^A0N,28,28^FH\\^FD*GL*: *G*^FS" +
-    					  "^BY4,3,160^FT65,182^BCN,,Y,N" +
-    					  "^FD>;12345678>69^FS" +
+    					  "^FT573,85^A0N,28,28^FH\\^FD*PN*^FS" +
+    					  "^FT573,119^A0N,28,28^FH\\^FD*BDL*: *BD*^FS" +
+    					  "^FT573,153^A0N,28,28^FH\\^FD*NIDL*: *NID*^FS" +
+    					  "^FT573,187^A0N,28,28^FH\\^FD*GL*: *G*^FS" +
+    					  "^BY4,3,160^FT65,182^B3N,,Y,N" +
+    					  "^FD*NID*^FS" +
     					  "^PQ1,0,1,Y^XZ";
+    	
     					  		
     	DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Context.getLocale());
     	//log.fatal("printing Bar Code");
@@ -87,52 +88,36 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 				throw new APIException("No patient passed to printPatientBarCode method");
 			}
 			
-			// TODO: potentially pull this formatting code into a configurable template?
-			// build the command to send to the printer -- written in ZPL
-			StringBuilder data = new StringBuilder();
-			data.append("^XA"); 
-			data.append("^CI28");   // specify Unicode encoding	
-			
+			/* Name (Only print first and last name */
+			String name = (patient.getPersonName().getGivenName() != null ? patient.getPersonName().getGivenName() : "")  + " " 
+					+ (patient.getPersonName().getFamilyName() != null ? patient.getPersonName().getFamilyName() : "") ;
 			/* Name (Only print first and last name */			
-			data.append("^FO140,40^AVN^FD" + (patient.getPersonName().getGivenName() != null ? patient.getPersonName().getGivenName() : "") + " " 
-					+ (patient.getPersonName().getFamilyName() != null ? patient.getPersonName().getFamilyName() : "") + "^FS");
 			
 			/* Birthdate */
-			data.append("^FO140,350^ATN^FD" + df.format(patient.getBirthdate()) + " " + (patient.getBirthdateEstimated() ? "(*)" : " ") + "^FS"); 
-			data.append("^FO140,400^ATN^FD" + Context.getMessageSourceService().getMessage("patientregistration.gender." + patient.getGender()) + "^FS"); 	
+			String birthDateLabel = Context.getMessageSourceService().getMessage("Person.birthdate");
+			String birthDate = (df.format(patient.getBirthdate()) + " " + (patient.getBirthdateEstimated() ? "(*)" : " ")); 
 			
-			/* Print the bar code, based on the primary identifier */
+			/*Gender*/
+			String genderLabel = Context.getMessageSourceService().getMessage("Patient.gender");
+			String gender = (patient.getGender().equalsIgnoreCase("M") ? Context.getMessageSourceService().getMessage("Patient.gender.male") : Context.getMessageSourceService().getMessage("Patient.gender.female")); 	
+			
+			/* Primary identifier */
 			PatientIdentifier primaryIdentifier = patient.getPatientIdentifier();
 			if (primaryIdentifier != null) {
-				data.append("^FO790,250^ATN^BY4^BCN,150^FD" + primaryIdentifier.getIdentifier() + "^FS");    // print barcode & identifier
-			}
-			
-			/* Quanity and print command */
-			data.append("^PQ" + 1);
-			data.append("^XZ");
-			
-			String[] cmd = new String[3];
-			
-			/*cmd[0] = "cmd.exe" ;
-            cmd[1] = "/c" ;
-            cmd[2] = "C:\\Users\\moasis\\printbarcode.bat";
-			
-			try{
-				log.fatal(data.toString());
-				File srcFile = new File("C:\\Users\\moasis\\barcode.zpl");
-				//File destDir = new File("\\\\MOASIS-PILOT\\ZebraPrinter\\");
-
-				FileUtils.writeStringToFile(srcFile,data.toString());
-				//FileUtils.copyFileToDirectory(srcFile, destDir);
-				Process proc = Runtime.getRuntime().exec("cmd /c C:\\Users\\moasis\\printbarcode.bat");
-
-				// any error message?
-				log.fatal("Barcode process exited with value: " + proc.exitValue() + " | " + proc.waitFor());
+				String nidLabel = primaryIdentifier.getIdentifierType().getName();
+				String nid = primaryIdentifier.getIdentifier();
 				
-			} catch (IOException io){
-				io.printStackTrace();
-			}*/
+				template = template.replace("*NIDL*", nidLabel);
+				template = template.replace("*NID*", nid );
+			}	
 			
+			template = template.replace("*PN*", name);
+			template = template.replace("*BDL*", birthDateLabel);
+			template = template.replace("*BD*", birthDate);
+			template = template.replace("*GL*", genderLabel);
+			template = template.replace("*G*", gender);
+
+		
 			  try {
 		           
 		           PrintService psZebra = null;
@@ -158,9 +143,9 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 		           }
 		           DocPrintJob job = psZebra.createPrintJob();
 
-		           String s = "^XA^FO100,40^BY3^B3,,30^FD123ABC^XZ";
+		           //String s = "^XA^FO100,40^BY3^B3,,30^FD123ABC^XZ";
 
-		           byte[] by = s.getBytes();
+		           byte[] by = template.getBytes();
 		           DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
 		           Doc doc = new SimpleDoc(by, flavor, null);
 		           job.print(doc, null);
