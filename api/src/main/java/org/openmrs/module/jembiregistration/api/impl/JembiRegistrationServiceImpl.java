@@ -47,6 +47,20 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
+	private final String LABEL_TEMPLATE = "^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR2,2~SD30^JUS^LRN^CI0^XZ"+
+			  "^XA" +
+			  "^MMT" +
+			  "^PW799" +
+			  "^LL0240" +
+			  "^LS24" +
+			  "^FT563,85^A0N,28,28^FH\\^FD*PN*^FS" +
+			  "^FT563,119^A0N,28,28^FH\\^FD*BDL*: *BD*^FS" +
+			  "^FT563,153^A0N,28,28^FH\\^FD*NIDL*: *NID*^FS" +
+			  "^FT563,187^A0N,28,28^FH\\^FD*GL*: *G*^FS" +
+			  "^BY2,3,160^FT65,182^BCN,,Y,N" +
+			  "^FD>:*NID*^FS" +
+			  "^PQ1,0,1,Y^XZ";
+	
 	private JembiRegistrationDAO dao;
 	
 	/**
@@ -64,20 +78,8 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
     }
     
     public boolean printPatientBarCode(Patient patient){
-    	String template = "^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR2,2~SD30^JUS^LRN^CI0^XZ"+
-    					  "^XA" +
-    					  "^MMT" +
-    					  "^PW799" +
-    					  "^LL0240" +
-    					  "^LS24" +
-    					  "^FT563,85^A0N,28,28^FH\\^FD*PN*^FS" +
-    					  "^FT563,119^A0N,28,28^FH\\^FD*BDL*: *BD*^FS" +
-    					  "^FT563,153^A0N,28,28^FH\\^FD*NIDL*: *NID*^FS" +
-    					  "^FT563,187^A0N,28,28^FH\\^FD*GL*: *G*^FS" +
-    					  "^BY4,3,160^FT65,182^BCN,,Y,N" +
-    					  "^FD>:*NID*^FS" +
-    					  "^PQ1,0,1,Y^XZ";
     	
+    	String label = LABEL_TEMPLATE;
     					  		
     	DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Context.getLocale());
     	//log.fatal("printing Bar Code");
@@ -86,6 +88,20 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 			// handle null case
 			if (patient == null) {
 				throw new APIException("No patient passed to printPatientBarCode method");
+			}
+			
+			String printerName = Context.getAdministrationService().getGlobalProperty("jembiregistration.PrinterName");
+			Integer copies, idType;
+			try {
+				copies = Integer.parseInt(Context.getAdministrationService().getGlobalProperty("jembiregistration.LabelPrintCount"));
+				idType = Integer.parseInt(Context.getAdministrationService().getGlobalProperty("jembiregistration.LabelIdType"));
+			} catch (NumberFormatException n){
+				
+				log.error("Global property is not valid" + n.getMessage());
+				
+				copies = 1;
+				idType = 0;
+				
 			}
 			
 			/* Name (Only print first and last name */
@@ -102,20 +118,22 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 			String gender = (patient.getGender().equalsIgnoreCase("M") ? Context.getMessageSourceService().getMessage("Patient.gender.male") : Context.getMessageSourceService().getMessage("Patient.gender.female")); 	
 			
 			/* Primary identifier */
-			PatientIdentifier primaryIdentifier = patient.getPatientIdentifier();
+			
+			PatientIdentifier primaryIdentifier = (idType==0) ? patient.getPatientIdentifier() : patient.getPatientIdentifier(Context.getPatientService().getPatientIdentifierType(idType));
+				
 			if (primaryIdentifier != null) {
 				String nidLabel = primaryIdentifier.getIdentifierType().getName();
 				String nid = primaryIdentifier.getIdentifier();
 				
-				template = template.replace("*NIDL*", nidLabel);
-				template = template.replace("*NID*", nid );
+				label = label.replace("*NIDL*", nidLabel);
+				label = label.replace("*NID*", nid );
 			}	
 			
-			template = template.replace("*PN*", name);
-			template = template.replace("*BDL*", birthDateLabel);
-			template = template.replace("*BD*", birthDate);
-			template = template.replace("*GL*", genderLabel);
-			template = template.replace("*G*", gender);
+			label = label.replace("*PN*", name);
+			label = label.replace("*BDL*", birthDateLabel);
+			label = label.replace("*BD*", birthDate);
+			label = label.replace("*GL*", genderLabel);
+			label = label.replace("*G*", gender);
 
 		
 			  try {
@@ -124,13 +142,14 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 		           String sPrinterName = null;
 		           PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
 		           
-		           log.fatal("Printers found:");
+		           
+		           
 		           for (int i = 0; i < services.length; i++) {
 		               
 		               PrintServiceAttribute attr = services[i].getAttribute(PrinterName.class);
 		               sPrinterName = ((PrinterName) attr).getValue();
 		               log.fatal(sPrinterName);
-		               if (sPrinterName.toLowerCase().indexOf("textbarcodeprinter") >= 0) {
+		               if (sPrinterName.toLowerCase().indexOf(printerName.toLowerCase()) >= 0) {
 		            	   
 		                   psZebra = services[i];
 		                   break;
@@ -138,21 +157,24 @@ public class JembiRegistrationServiceImpl extends BaseOpenmrsService implements 
 		           }
 		           
 		           if (psZebra == null) {
-		               log.fatal("Zebra printer is not found.");
+		               log.error("Zebra printer is not found. Barcode could not be printed. Check your global properties to make sure printer names match");
 		               
 		           }
-		           DocPrintJob job = psZebra.createPrintJob();
+		           
+		           for (int i=1; i<=copies; i++){
+		        	   
+		        	   DocPrintJob job = psZebra.createPrintJob();;
 
-		           //String s = "^XA^FO100,40^BY3^B3,,30^FD123ABC^XZ";
-
-		           byte[] by = template.getBytes();
-		           DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-		           Doc doc = new SimpleDoc(by, flavor, null);
-		           job.print(doc, null);
+		        	   byte[] by = label.getBytes();
+		        	   DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+		        	   Doc doc = new SimpleDoc(by, flavor, null);
+		        	   job.print(doc, null);
+		           
+		           }
 		           
 		       } catch (PrintException e) {
 		           e.printStackTrace();
-		       }      
+		       } 
 		   //}
 		} catch (Exception e){
 			e.printStackTrace();

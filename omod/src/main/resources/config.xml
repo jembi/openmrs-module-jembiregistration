@@ -29,12 +29,37 @@
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.JembiRegistrationActivator</activator>
 	
+	<!-- Global Properties -->
+	
+	<globalProperty>
+		<property>${project.parent.artifactId}.LabelPrintCount</property>
+		<defaultValue>1</defaultValue>
+		<description>
+			Number of copies of a patient's registration label to print.
+		</description>
+	</globalProperty>
+	
+	<globalProperty>
+		<property>${project.parent.artifactId}.LabelIdType</property>
+		<defaultValue>0</defaultValue>
+		<description>
+			Set the Patient Idenifier Type that should be printed as a barcode. 0 uses the Preferred Patient Id.
+		</description>
+	</globalProperty>
+	
+	<globalProperty>
+		<property>${project.parent.artifactId}.PrinterName</property>
+		<defaultValue>TextBarCodePrinter</defaultValue>
+		<description>
+			Set the name of the Zebra Barcode Printer using Generic/Text drivers.
+		</description>
+	</globalProperty>
 	
 	<!-- Adds link to admin page -->
-	<extension>
+	<!--  <extension>
 		<point>org.openmrs.admin.list</point>
 		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
-	</extension>
+	</extension> -->
 	
 	<extension>
 		<point>org.openmrs.patientDashboard.afterLastEncounter</point>
