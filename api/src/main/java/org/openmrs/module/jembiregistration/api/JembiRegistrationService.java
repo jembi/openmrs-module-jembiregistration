@@ -13,13 +13,13 @@
  */
 package org.openmrs.module.jembiregistration.api;
 
-import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * This service exposes module's core functionality. It is a Spring managed bean which is configured in moduleApplicationContext.xml.
+ * This service exposes module's core functionality. It is a Spring managed bean
+ * which is configured in moduleApplicationContext.xml.
  * <p>
  * It can be accessed only via Context:<br>
  * <code>
@@ -30,13 +30,13 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 public interface JembiRegistrationService extends OpenmrsService {
-     
-	/*
-	 * Add service methods here
-	 * 
-	 */
-	
 
-	public boolean printPatientBarCode(Patient patient);
+	/**
+	 * Prints a barcode for a given patient.
+	 * 
+	 * @param patient
+	 *            The patient for whom the barcode should be printed
+	 */
+	public void printPatientBarcode(Patient patient);
 
 }
