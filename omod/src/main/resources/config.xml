@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <module configVersion="1.2">
-
 	<!-- Module Properties -->
 	<id>${project.parent.artifactId}</id>
 	<name>${project.parent.name}</name>
 	<version>${project.parent.version}</version>
 	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
-	<author>jembi</author>
+	<author>Jembi Health Systems</author>
 	<description>
 		${project.parent.description}
 	</description>
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
 	<require_version>${openMRSVersion}</require_version>
 	<!-- / Module Properties -->
-
 	
 	<!-- Required Modules -->
-	<require_modules>
-																											
+	<require_modules>																											
 		<require_module version="0.1">
 			org.openmrs.module.addresshierarchy
-		</require_module>
-			
+		</require_module>		
 	</require_modules>
 	<!-- / Required Modules -->
 	
@@ -30,7 +26,6 @@
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.JembiRegistrationActivator</activator>
 	
 	<!-- Global Properties -->
-	
 	<globalProperty>
 		<property>${project.parent.artifactId}.LabelPrintCount</property>
 		<defaultValue>1</defaultValue>
@@ -54,37 +49,18 @@
 			Set the name of the Zebra Barcode Printer using Generic/Text drivers.
 		</description>
 	</globalProperty>
-	
-	<!-- Adds link to admin page -->
-	<!--  <extension>
-		<point>org.openmrs.admin.list</point>
-		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
-	</extension> -->
-	
+
+	<!-- Add print barcode button to top of patient dashboard -->
 	<extension>
 		<point>org.openmrs.patientDashboard.afterLastEncounter</point>
-		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.BarCodeExt</class>
+		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.BarcodeExt</class>
 	</extension>
-	
-	 <!--  
-	<extension>
-		<point>org.openmrs.patientDashboard.afterLastEncounter</point>
-		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.PrintBarCodeExt</class>
-	</extension>
-	-->
-	<!-- Add print barcode link to top of patient dashboard -->
-	
+
+	<!-- Create separate search and registration pages -->
 	<extension>
     	<point>org.openmrs.gutter.tools</point>
     	<class>org.openmrs.module.jembiregistration.extension.html.RegisterPatientGutterListExt</class>
 	</extension>
-	
-	<!-- Maps hibernate file's, if present -->
-	<mappingFiles>
-				
-		JembiRegistration.hbm.xml
-				
-	</mappingFiles>
 
 	<!-- Internationalization -->
 	<!-- All message codes should start with ${project.parent.artifactId}. -->
@@ -98,11 +74,10 @@
 	</messages>
 	<!-- /Internationalization -->
 	
+	<!-- Register the printing servlet -->
 	<servlet>
-  	   <servlet-name>printBarCodeServlet</servlet-name>
- 	   <servlet-class>org.openmrs.module.jembiregistration.web.servlet.PrintBarCodeServlet</servlet-class>
+  	   <servlet-name>printBarcodeServlet</servlet-name>
+ 	   <servlet-class>org.openmrs.module.jembiregistration.web.servlet.PrintBarcodeServlet</servlet-class>
 	</servlet>   
-	
-
 </module>
 

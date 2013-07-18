@@ -13,58 +13,58 @@
  */
 package org.openmrs.module.jembiregistration;
 
-
-import org.apache.commons.logging.Log; 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.ModuleActivator;
 
 /**
- * This class contains the logic that is run every time this module is either started or stopped.
+ * This class contains the logic that is run every time this module is either
+ * started or stopped.
  */
 public class JembiRegistrationActivator implements ModuleActivator {
-	
+
 	protected Log log = LogFactory.getLog(getClass());
-		
+
 	/**
 	 * @see ModuleActivator#willRefreshContext()
 	 */
 	public void willRefreshContext() {
 		log.info("Refreshing Jembi Registration Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
 		log.info("Jembi Registration Module refreshed");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#willStart()
 	 */
 	public void willStart() {
 		log.info("Starting Jembi Registration Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
 		log.info("Jembi Registration Module started");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#willStop()
 	 */
 	public void willStop() {
 		log.info("Stopping Jembi Registration Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#stopped()
 	 */
 	public void stopped() {
 		log.info("Jembi Registration Module stopped");
 	}
-		
+
 }
