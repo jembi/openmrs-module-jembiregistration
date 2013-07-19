@@ -30,6 +30,9 @@ barcode printer**
 > section [here](http://www.shiprush.com/Product_Documentation/ShipRush_v9-0_USPS/Content/Thermal_Printer_Installation.htm)
 > for additional instructions. There is no need to install the Zebra printer drivers. The printer
 > user manual can be found [here](http://www.zebra.com/content/dam/zebra/manuals/en-us/printer/gk420t-ug-en.pdf).
+> The bar codes are setup to be printed on 30x100mm sticker labels. To change the label and layout, the label template 
+> in the JembiRegistrationServiceImpl class can be changed. The label template is specified using ZPLII code, for which there
+> is full documentation on the Zebra website.
 
 * Module Installation
 
