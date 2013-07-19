@@ -13,16 +13,18 @@
  */
 package org.openmrs.module.jembiregistration.api;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
- * Tests {@link ${JembiRegistrationService}}.
+ * Tests {@link $ JembiRegistrationService} .
  */
-public class  JembiRegistrationServiceTest extends BaseModuleContextSensitiveTest {
-	
+public class JembiRegistrationServiceTest extends
+		BaseModuleContextSensitiveTest {
+
 	@Test
 	public void shouldSetupContext() {
 		assertNotNull(Context.getService(JembiRegistrationService.class));
