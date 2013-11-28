@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>jembiregistration</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1.1</version>
 	<packaging>pom</packaging>
 	<name>Jembi Registration Module</name>
 	<description>Facilitating the registration of patients using the address hierarchy module as well as barcode printing.</description>
